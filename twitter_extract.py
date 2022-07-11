@@ -1,15 +1,15 @@
-#%%
 import os
-import pandas
+import pandas as pd
 import requests
 import datetime as dt
+from pathlib import Path
 
-TODAY = dt.datetime.today().isoformat(timespec='seconds') + 'Z'
-ONE_WEEK_AGO = (dt.datetime.today() - dt.timedelta(days = 6)).isoformat(timespec='seconds') + 'Z'
+TODAY = dt.datetime.today().isoformat(timespec = 'seconds') + 'Z'
+ONE_WEEK_AGO = (dt.datetime.today() - dt.timedelta(days = 6)).isoformat(timespec = 'seconds') + 'Z'
 
 def create_headers():
-    bearer_token = os.environ.get("TWITTER_BEARER_TOKEN")
-    return {"Authorization": f"Bearer {bearer_token}"}
+    bearer_token = os.environ.get('TWITTER_BEARER_TOKEN')
+    return {'Authorization': f'Bearer {bearer_token}'}
 
 def create_params(hashtag):
     params = {
@@ -22,7 +22,7 @@ def create_params(hashtag):
     return params
 
 def get_search_request(headers, params):
-    url = "https://api.twitter.com/2/tweets/search/recent"
+    url = 'https://api.twitter.com/2/tweets/search/recent'
     return requests.request("GET", url, params = params, headers = headers).json()
 
 def pagination(first_response, headers, params):
@@ -36,23 +36,21 @@ def pagination(first_response, headers, params):
     return tweets
 
 def main():
-    headers = create_headers()
-    params = create_params(hashtag = "Apruebo")
-    response = get_search_request(headers, params)
-    tweets = pagination(response, headers, params)
     hashtags = ['AprueboFeliz', 'Apruebo', 'NuevaConstitucion', 'Plebiscito', 'NuevaConstitucion', 
         'RutaConstituyente', 'ConvencionConstituyente', 'PlebiscitoConstitucional', 'PlebiscitoDeSalida',
         'RechazoDeSalida', 'AprueboCrece', 'Constitucion', 'Rechazo', 'RechazoTransversal', 'YoRechazo']
+    tweets = []
+    for hashtag in hashtags:
+        print(f'Scrapping hashtag: {hashtag}')
+        headers = create_headers()
+        params = create_params(hashtag = hashtag)
+        response = get_search_request(headers = headers, params = params)
+        tweets += pagination(first_response = response, headers = headers, params = params)
     return tweets
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     tweets = main()
-
-
-
-
-
-
-
-
-# %%
+    tweets_df = pd.DataFrame(tweets)
+    path = Path('data')
+    with open(path, 'w', newline = '') as f:
+        tweets_df.to_csv(f, index = False)

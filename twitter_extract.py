@@ -29,7 +29,8 @@ def get_search_request(headers, params):
 
 def pagination(first_response, headers, params):
     response = first_response
-    tweets = first_response['data']
+    tweets = []
+    tweets += first_response.get('data')
     while response['meta'].get('next_token'):
         print(f"Total scrapped tweets: {len(tweets)}")
         params['pagination_token'] = response['meta']['next_token']
@@ -51,11 +52,12 @@ def main():
         tweets_df = pd.DataFrame(tweets)
         tweets_df['search_hashtag'] = hashtag
         total_tweets_df = pd.concat([total_tweets_df, tweets_df])
+    total_tweets_df["text"] = total_tweets_df .text.str.replace('\n', ' ')
     return total_tweets_df
 
 def save_dataframe(df, name):
     path = Path('data') / name
-    with open(path, 'w', newline = '') as f:
+    with open(path, 'w', encoding ='utf-8', newline = '') as f:
         df.to_csv(f, index = False)
 
 if __name__ == '__main__':

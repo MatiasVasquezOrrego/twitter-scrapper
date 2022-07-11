@@ -4,22 +4,6 @@ import pandas
 import requests
 import datetime as dt
 
-#AprueboFeliz 
-#Apruebo 
-#NuevaConstitucion
-#Plebiscito 
-#NuevaConstitucion
-#RutaConstituyente
-#ConvencionConstituyente
-#PlebiscitoConstitucional
-#PlebiscitoDeSalida 
-#RechazoDeSalida 
-#AprueboCrece
-#Constitucion
-#Rechazo 
-#RechazoTransversal
-#YoRechazo
-#'b26v89c19zqg8o3fpz2mvagplwk78esg5c7tohp79ilj1'
 TODAY = dt.datetime.today().isoformat(timespec='seconds') + 'Z'
 ONE_WEEK_AGO = (dt.datetime.today() - dt.timedelta(days = 6)).isoformat(timespec='seconds') + 'Z'
 
@@ -56,10 +40,13 @@ def main():
     params = create_params(hashtag = "Apruebo")
     response = get_search_request(headers, params)
     tweets = pagination(response, headers, params)
+    hashtags = ['AprueboFeliz', 'Apruebo', 'NuevaConstitucion', 'Plebiscito', 'NuevaConstitucion', 
+        'RutaConstituyente', 'ConvencionConstituyente', 'PlebiscitoConstitucional', 'PlebiscitoDeSalida',
+        'RechazoDeSalida', 'AprueboCrece', 'Constitucion', 'Rechazo', 'RechazoTransversal', 'YoRechazo']
     return tweets
 
 if __name__ == "__main__":
-    a = main()
+    tweets = main()
 
 
 
